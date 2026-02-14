@@ -123,7 +123,7 @@ function showTooltip(target, profile) {
         
         <div class="soci4l-tooltip-actions">
             <a href="${profileUrl}" target="_blank" class="soci4l-action-btn soci4l-btn-secondary">View Profile</a>
-            <a href="${profileUrl}" target="_blank" class="soci4l-action-btn soci4l-btn-primary soci4l-donate-btn">Donate</a>
+            <button class="soci4l-action-btn soci4l-btn-primary soci4l-donate-trigger" data-address="${profile.address}" data-slug="${profile.slug || ''}">Donate</button>
         </div>
     `;
 
@@ -139,6 +139,19 @@ function showTooltip(target, profile) {
             });
         };
     }
+
+    // Setup donate listener
+    const donateBtn = globalTooltip.querySelector('.soci4l-donate-trigger');
+    if (donateBtn) {
+        donateBtn.onclick = (e) => {
+            e.preventDefault();
+            const address = donateBtn.dataset.address;
+            const slug = donateBtn.dataset.slug;
+            const donateUrl = `${API_BASE_URL}/p/${slug || address}?action=donate`;
+            window.open(donateUrl, '_blank');
+        };
+    }
+
 
     globalTooltip.style.left = `${rect.left + rect.width / 2}px`;
     globalTooltip.style.top = `${rect.top - 8}px`; // Balanced offset
