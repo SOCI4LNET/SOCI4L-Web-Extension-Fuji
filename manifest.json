@@ -4,9 +4,9 @@
     "version": "1.0",
     "description": "Connects X.com profiles to SOCI4L Web3 identities.",
     "icons": {
-        "16": "icons/icon16.png",
-        "48": "icons/icon48.png",
-        "128": "icons/icon128.png"
+        "16": "icons/icon.svg",
+        "48": "icons/icon.svg",
+        "128": "icons/icon.svg"
     },
     "content_scripts": [
         {
