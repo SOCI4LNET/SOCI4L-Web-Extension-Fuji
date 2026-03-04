@@ -33,8 +33,6 @@
     ],
     "host_permissions": [
         "https://twitter.com/*",
-        "https://x.com/*",
-        "https://soci4l.net/*",
-        "http://localhost:3000/*"
+        "https://x.com/*"
     ]
 }
