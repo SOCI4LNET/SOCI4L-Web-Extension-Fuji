@@ -1,12 +1,20 @@
 {
     "manifest_version": 3,
-    "name": "SOCI4L Connector",
+    "name": "SOCI4L Donate",
     "version": "1.0.1",
-    "description": "Connects X.com profiles to SOCI4L Web3 identities.",
+    "description": "Show SOCI4L verified badges on X (Twitter) profiles and easily send direct crypto donations.",
     "icons": {
-        "16": "icons/icon.svg",
-        "48": "icons/icon.svg",
-        "128": "icons/icon.svg"
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
+    "action": {
+        "default_icon": {
+            "16": "icons/icon16.png",
+            "48": "icons/icon48.png",
+            "128": "icons/icon128.png"
+        },
+        "default_title": "SOCI4L Donate"
     },
     "content_scripts": [
         {

@@ -7,11 +7,11 @@ console.log("[SOCI4L] Extension loaded on X.com");
 
 // Icon SVG (Branded Logo)
 const BADGE_ICON = `
-<svg viewBox="0 0 105.81 111.83" xmlns="http://www.w3.org/2000/svg">
-  <g>
-    <path d="M49.89,81.2H0c9.23,18.18,28.11,30.63,49.89,30.63,30.88,0,55.92-25.04,55.92-55.92S80.77,0,49.89,0v30.63c13.96,0,25.28,11.32,25.28,25.28s-11.32,25.28-25.28,25.28Z"/>
-    <path d="M49.89,30.63v50.56c-13.97,0-25.28-11.32-25.28-25.28s11.31-25.28,25.28-25.28Z"/>
-  </g>
+<svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M59.3105 0V12.79L46.5205 26.4H33.7305V12.79L46.5205 0H59.3105Z" fill="currentColor"/>
+  <path d="M25.58 32.7798V46.4398L12.8 59.2298H0V46.4398L12.8 32.7798H25.58Z" fill="currentColor"/>
+  <path d="M59.3105 59.2298V46.4398L46.5205 32.7798H33.7305V46.4398L46.5205 59.2298H59.3105Z" fill="currentColor"/>
+  <path d="M25.5804 26.3998V12.7898L21.2004 8.25977H8.40039V21.1898L12.8004 26.3998H25.5804Z" fill="currentColor"/>
 </svg>`;
 
 // Cache to prevent repetitive lookups
@@ -29,16 +29,9 @@ const SELECTORS = {
  * Extract handle from a User-Name element or URL
  */
 function extractHandle(element) {
-    // Logic to find @username inside the element
-    // On X, the handle is usually in a span starting with @
-    const spans = element.querySelectorAll('span');
-    for (const span of spans) {
-        const text = span.innerText;
-        const match = text.match(/@([a-zA-Z0-9_]+)/);
-        if (match) return match[1];
-    }
+    const text = element.textContent;
+    if (!text) return null;
 
-    const text = element.innerText;
     const match = text.match(/@([a-zA-Z0-9_]+)/);
     if (match) return match[1];
 
@@ -47,7 +40,7 @@ function extractHandle(element) {
     if (anchor) {
         const href = anchor.getAttribute('href');
         if (href && href.startsWith('/') && !href.includes('/status/')) {
-            const handle = href.substring(1);
+            const handle = href.substring(1).split('/')[0];
             if (!['home', 'explore', 'notifications', 'messages', 'i', 'settings'].includes(handle.toLowerCase())) {
                 return handle;
             }
@@ -55,6 +48,26 @@ function extractHandle(element) {
     }
     return null;
 }
+
+/**
+ * Sync Light/Dark theme from X.com
+ */
+function updateTheme() {
+    const bgColor = getComputedStyle(document.body).backgroundColor;
+    const rgb = bgColor.match(/\d+/g);
+    if (rgb && rgb.length >= 3) {
+        const brightness = (parseInt(rgb[0]) * 299 + parseInt(rgb[1]) * 587 + parseInt(rgb[2]) * 114) / 1000;
+        if (brightness > 128) {
+            document.body.classList.remove('soci4l-dark-theme');
+            document.body.classList.add('soci4l-light-theme');
+        } else {
+            document.body.classList.remove('soci4l-light-theme');
+            document.body.classList.add('soci4l-dark-theme');
+        }
+    }
+}
+setInterval(updateTheme, 1000);
+updateTheme();
 
 /**
  * Check API for verification status
@@ -170,13 +183,17 @@ function hideTooltip() {
 /**
  * Inject Badge
  */
-function injectBadge(element, profile) {
-    if (element.querySelector('.soci4l-badge') || element.closest('.soci4l-badge-container')) return;
+function injectBadge(container, profile) {
+    if (container.querySelector('.soci4l-badge') || container.closest('.soci4l-badge-container')) return;
 
-    const badge = document.createElement('a');
-    badge.href = `${API_BASE_URL}/p/${profile.slug || profile.address}`;
-    badge.target = '_blank';
+    // Use a SPAN instead of A to prevent DOM destruction from nested anchor tags inside Twitter components
+    const badge = document.createElement('span');
     badge.className = 'soci4l-badge';
+
+    // Add specific class for main profile view (which does not sit inside a post)
+    if (!container.closest('[data-testid="tweet"]')) {
+        badge.classList.add('soci4l-badge-profile');
+    }
     badge.innerHTML = `
         <span class="soci4l-badge-icon">${BADGE_ICON}</span>
         <span class="soci4l-badge-text">SOCI4L</span>
@@ -184,21 +201,37 @@ function injectBadge(element, profile) {
 
     badge.addEventListener('mouseenter', () => showTooltip(badge, profile));
     badge.addEventListener('mouseleave', hideTooltip);
-    badge.onclick = (e) => e.stopPropagation();
+    badge.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(`${API_BASE_URL}/p/${profile.slug || profile.address}`, '_blank');
+    };
 
-    // Precise Injection logic for X.com
-    const verifiedIcon = element.querySelector('svg[aria-label*="Verified"], svg[aria-label*="doğrulanmış"], [data-testid="icon-verified"]');
-
+    // Strategy 1: Find the verified icon wrapper and append to the nearest flex row
+    const verifiedIcon = container.querySelector('[data-testid="icon-verified"]');
     if (verifiedIcon) {
-        let target = verifiedIcon;
-        while (target.parentElement && target.parentElement !== element) {
-            target = target.parentElement;
+        // Twitter uses CSS class 'r-18u37iz' for row-based flex containers.
+        // If we append inside the row container, it stays strictly side-by-side.
+        const flexRow = verifiedIcon.closest('.r-18u37iz') || verifiedIcon.parentElement;
+        if (flexRow) {
+            flexRow.style.flexWrap = 'nowrap';
+            flexRow.appendChild(badge);
+            return;
         }
-        target.insertAdjacentElement('afterend', badge);
-    } else {
-        // No verified icon, just append to the end of the name container
-        element.appendChild(badge);
     }
+
+    // Strategy 2: Find the main display name flex container (first inner row)
+    const nameStr = container.querySelector('span[dir="ltr"]') || container.querySelector('div[dir="ltr"]');
+    if (nameStr) {
+        const flexRow = nameStr.closest('.r-18u37iz') || nameStr;
+        flexRow.style.flexWrap = 'nowrap';
+        flexRow.appendChild(badge);
+        return;
+    }
+
+    // Strategy 3: Fallback generic append
+    container.style.flexWrap = 'nowrap';
+    container.appendChild(badge);
 }
 
 /**
@@ -230,12 +263,7 @@ function scanPage() {
         const profile = await checkVerification(currentHandle);
 
         if (profile) {
-            const nameWrapper = el.querySelector('span'); // usually display name
-            if (nameWrapper) {
-                injectBadge(nameWrapper.parentElement || nameWrapper, profile);
-            } else {
-                injectBadge(el, profile);
-            }
+            injectBadge(el, profile);
         }
     });
 }
