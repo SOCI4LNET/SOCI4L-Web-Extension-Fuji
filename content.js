@@ -1,6 +1,6 @@
 // SOCI4L Connector Content Script
 
-const API_BASE_URL = "https://soci4l.net";
+const API_BASE_URL = "https://testnet.soci4l.net";
 // const API_BASE_URL = "http://localhost:3000";
 
 console.log("[SOCI4L] Extension loaded on X.com");

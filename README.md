@@ -1,33 +1,60 @@
-# SOCI4L Donate Web Extension
+# SOCI4L Donate — Chrome Extension (Fuji Testnet)
 
-SOCI4L Donate is a Chrome Web Extension that displays verified SOCI4L badges on X (Twitter) profiles. It empowers users to easily identify verified SOCI4L identities and seamlessly send direct crypto donations to their favorite creators or friends.
+> ⚠️ **This is the Fuji Testnet build** — all donations go to the **Avalanche Fuji Testnet** and use testnet AVAX. This build is intended for evaluation by the **Avalanche Build Games jury**.
+>
+> For the production (Mainnet) extension, see: [SOCI4L-Web-Extension](https://github.com/SOCI4LNET/SOCI4L-Web-Extension)
 
-## How It Works
+---
 
-1. **DOM Parsing**: The extension injects a lightweight content script (`content.js`) that quietly observes the X (Twitter) feed and profile pages to identify user handles (e.g., `@username`).
-2. **Verification Check**: For each unique handle discovered on the screen, the extension queries the official public SOCI4L API (`https://soci4l.net/api/social/lookup`) to check if the user has connected and verified their X account on SOCI4L.
-3. **Badge Injection**: If the API confirms the user is verified, the extension dynamically injects a visually distinct SOCI4L badge right next to the user's display name on X.
-4. **Donation Interface**: Hovering over the injected badge reveals a sleek, glassmorphism-styled tooltip displaying the user's connected Web3 wallet address. From there, users can instantly copy the address or click the "Donate" button, which redirects them directly to the user's SOCI4L profile donation page.
+## What It Does
 
-## Data Privacy & Access
+The **SOCI4L Donate** extension enhances your X (Twitter) experience by:
 
-**Privacy First:** This extension strictly respects user privacy and **does not collect, store, or transmit any sensitive, personal data.** 
+1. **Badge Injection**: As you browse X, the extension detects Twitter/X handles visible on the page. For each one, it looks up whether that user has a verified SOCI4L profile.
+2. **Verification Check**: For each unique handle discovered on the screen, the extension queries the **Fuji Testnet** SOCI4L API (`https://testnet.soci4l.net/api/social/lookup`) to check if the user has verified their X account on SOCI4L.
+3. **Interactive Badge**: If a match is found, a small **SOCI4L badge** is injected next to the username. Hovering over it shows a tooltip with:
+   - The user's verified wallet address (with a copy button)
+   - A **View Profile** button linking directly to their SOCI4L testnet profile
+   - A **Donate** button that opens the donation modal in a new tab on `testnet.soci4l.net`
 
-- **Read Access:** The extension only reads the public HTML DOM elements of X.com (Twitter) to find visible usernames on the screen. It does not read your private messages, passwords, or account details.
-- **Network Requests:** The only outbound network requests made are zero-auth, read-only GET requests to the public SOCI4L API. It asks one simple question: *"Is this public username verified on SOCI4L?"*
-- **No Tracking:** There are no analytics, trackers, background data collection, or telemetry mechanisms bundled within this extension.
+---
 
-## Development Roadmap & Future Plans
+## Installation (Unpacked / Developer Mode)
 
-- [ ] **Performance Optimizations**: Continuously refine our DOM observers to ensure absolute zero impact on X.com's browser performance and adapt to any UI layout updates from X.
-- [ ] **Interactive Popup UI**: Add a browser action popup window when clicking the extension icon in the toolbar, to allow users to toggle badge visibility or manage preferences.
-- [ ] **On-Page Donation Widget**: Investigate the feasibility of a mini Web3 injection that allows sending crypto transactions securely without ever leaving the X.com interface.
-- [ ] **Multi-Platform Support**: Expand badge injection beyond X (Twitter) to other relevant social platforms (e.g., Farcaster, Lens, GitHub).
-- [ ] **Cross-Browser Ports**: Package and release the extension natively for Firefox, Brave, and macOS/iOS Safari.
+This testnet extension is not available on the Chrome Web Store. Install it manually:
 
-## Installation (Developer Mode)
+1. **Download or clone** this repository to your local machine.
+2. Open **Google Chrome** and navigate to `chrome://extensions`.
+3. Enable **Developer mode** (toggle in the top-right corner).
+4. Click **"Load unpacked"**.
+5. Select the folder where you cloned/downloaded this repository.
+6. The **SOCI4L Donate (Fuji Testnet)** extension will appear in your extensions list.
 
-1. Clone this repository.
-2. Open Chrome and navigate to `chrome://extensions/`.
-3. Enable **Developer mode** in the top right corner.
-4. Click **Load unpacked** and select the extension directory.
+---
+
+## How to Test
+
+1. Make sure you have a SOCI4L profile on [testnet.soci4l.net](https://testnet.soci4l.net) with your **X (Twitter) account verified**.
+2. Browse to any profile on [x.com](https://x.com) — if that user has a verified SOCI4L account, you'll see the SOCI4L badge appear next to their name.
+3. Hover over the badge to see their wallet address and donation options.
+4. Click **Donate** to send testnet AVAX directly to their wallet via the SOCI4L platform.
+
+> **Note:** Donations made with this extension target the **Fuji Testnet** (Chain ID: 43113). You need Fuji testnet AVAX to complete transactions. You can get testnet AVAX from the [Avalanche Faucet](https://faucet.avax.network/).
+
+---
+
+## Tech Stack
+
+- **Manifest V3** Chrome Extension
+- Vanilla JavaScript (no framework dependencies)
+- API: `https://testnet.soci4l.net/api/social/lookup`
+- Network: Avalanche Fuji Testnet (Chain ID: 43113)
+
+---
+
+## Links
+
+- 🌐 Testnet Platform: [testnet.soci4l.net](https://testnet.soci4l.net)
+- 🏗️ Mainnet Extension: [SOCI4L-Web-Extension](https://github.com/SOCI4LNET/SOCI4L-Web-Extension)
+- 📄 Project Showcase: [SOCI4L-Showcase](https://github.com/SOCI4LNET/SOCI4L-Showcase)
+- 🐦 Follow us: [@SOCI4LNET](https://x.com/SOCI4LNET)

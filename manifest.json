@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "SOCI4L Donate",
+    "name": "SOCI4L Donate (Fuji Testnet)",
     "version": "1.0.1",
-    "description": "Show SOCI4L verified badges on X (Twitter) profiles and easily send direct crypto donations.",
+    "description": "SOCI4L Donate extension — Fuji Testnet build for Avalanche Build Games evaluation. Detects verified SOCI4L profiles on X (Twitter) and enables direct testnet AVAX donations.",
     "icons": {
         "16": "icons/icon16.png",
         "48": "icons/icon48.png",
