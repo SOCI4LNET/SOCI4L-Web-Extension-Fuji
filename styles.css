@@ -1,5 +1,5 @@
-/* SOCI4L Badge Styles */
-.soci4l-badge {
+/* SOCI4L Fuji Badge Styles — namespaced to avoid conflict with mainnet extension */
+.soci4l-fuji-badge {
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
@@ -10,50 +10,47 @@
   border-radius: 4px;
   padding: 0 5px;
   height: 1.25em;
-  /* Match X verified icon height exactly to prevent pushing it up */
   box-sizing: border-box;
   text-decoration: none !important;
   flex-shrink: 0;
   line-height: 1;
   vertical-align: middle;
-  /* Critical for non-flex inline alignments */
 }
 
-/* 10% smaller for profile pages, natively scales all properties! */
-.soci4l-badge-profile {
+.soci4l-fuji-badge-profile {
   font-size: 0.9em;
 }
 
-body.soci4l-light-theme .soci4l-badge {
+body.soci4l-fuji-light-theme .soci4l-fuji-badge {
   background: rgba(15, 20, 25, 0.05);
   border: 1px solid rgba(15, 20, 25, 0.15);
   color: #0f1419;
 }
 
-body.soci4l-light-theme .soci4l-badge:hover {
+body.soci4l-fuji-light-theme .soci4l-fuji-badge:hover {
   background: rgba(15, 20, 25, 0.1);
   transform: translateY(-1px);
 }
 
-body.soci4l-dark-theme .soci4l-badge {
+body.soci4l-fuji-dark-theme .soci4l-fuji-badge {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.25);
   color: #e7e9ea;
 }
 
-body.soci4l-dark-theme .soci4l-badge:hover {
+body.soci4l-fuji-dark-theme .soci4l-fuji-badge:hover {
   background: rgba(255, 255, 255, 0.15);
   transform: translateY(-1px);
 }
 
 /* Fallback if theme JS hasn't run yet */
-.soci4l-badge {
+.soci4l-fuji-badge {
   background: rgba(128, 128, 128, 0.1);
   border: 1px solid rgba(128, 128, 128, 0.2);
   color: inherit;
 }
 
-.soci4l-badge-icon {
+.soci4l-fuji-badge-icon {
   width: 0.9em;
   height: 0.9em;
   margin-right: 4px;
@@ -62,25 +59,23 @@ body.soci4l-dark-theme .soci4l-badge:hover {
   justify-content: center;
 }
 
-.soci4l-badge-icon svg {
+.soci4l-fuji-badge-icon svg {
   width: 100%;
   height: 100%;
   fill: currentColor;
-  /* Inherits from the `.soci4l-badge` rule */
 }
 
-.soci4l-badge-text {
+.soci4l-fuji-badge-text {
   color: currentColor;
   font-size: 0.75em;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   margin-top: 1px;
-  /* Optical adjustment */
 }
 
-/* Global Tooltip (Premium Glassmorphism) */
-.soci4l-global-tooltip {
+/* Global Tooltip */
+.soci4l-fuji-global-tooltip {
   position: fixed;
   background: rgba(10, 10, 10, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -100,24 +95,23 @@ body.soci4l-dark-theme .soci4l-badge:hover {
   min-width: 210px;
 }
 
-.soci4l-global-tooltip.visible {
+.soci4l-fuji-global-tooltip.visible {
   opacity: 1;
   visibility: visible;
   transform: translateX(-50%) translateY(0);
   pointer-events: auto;
 }
 
-.soci4l-tooltip-header {
+.soci4l-fuji-tooltip-header {
   margin-bottom: 14px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
 }
 
-.soci4l-tooltip-verified {
+.soci4l-fuji-tooltip-verified {
   font-weight: 600;
   color: #FFF;
-  /* Fully white as requested */
   display: flex;
   align-items: center;
   gap: 8px;
@@ -125,7 +119,7 @@ body.soci4l-dark-theme .soci4l-badge:hover {
   letter-spacing: -0.01em;
 }
 
-.soci4l-tooltip-address-row {
+.soci4l-fuji-tooltip-address-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -136,14 +130,14 @@ body.soci4l-dark-theme .soci4l-badge:hover {
   margin-bottom: 16px;
 }
 
-.soci4l-tooltip-address {
+.soci4l-fuji-tooltip-address {
   font-family: "SF Mono", "Fira Code", monospace;
   font-size: 11px;
   color: rgba(255, 255, 255, 0.4);
   letter-spacing: 0.02em;
 }
 
-.soci4l-copy-btn {
+.soci4l-fuji-copy-btn {
   background: none;
   border: none;
   color: rgba(255, 255, 255, 0.3);
@@ -154,18 +148,18 @@ body.soci4l-dark-theme .soci4l-badge:hover {
   transition: all 0.2s;
 }
 
-.soci4l-copy-btn:hover {
+.soci4l-fuji-copy-btn:hover {
   color: #FFF;
   transform: scale(1.1);
 }
 
-.soci4l-tooltip-actions {
+.soci4l-fuji-tooltip-actions {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.soci4l-action-btn {
+.soci4l-fuji-action-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -179,25 +173,23 @@ body.soci4l-dark-theme .soci4l-badge:hover {
   cursor: pointer;
 }
 
-/* Secondary (Grey/Dark) */
-.soci4l-btn-secondary {
+.soci4l-fuji-btn-secondary {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #FFF;
 }
 
-.soci4l-btn-secondary:hover {
+.soci4l-fuji-btn-secondary:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Primary (White) */
-.soci4l-btn-primary {
+.soci4l-fuji-btn-primary {
   background: #FFF;
   color: #000;
 }
 
-.soci4l-btn-primary:hover {
+.soci4l-fuji-btn-primary:hover {
   background: #EEE;
   transform: scale(1.02);
 }
