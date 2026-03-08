@@ -1,9 +1,11 @@
-// SOCI4L Connector Content Script
+// SOCI4L Connector Content Script (Fuji Testnet)
 
 const API_BASE_URL = "https://testnet.soci4l.net";
-// const API_BASE_URL = "http://localhost:3000";
 
-console.log("[SOCI4L] Extension loaded on X.com");
+// Namespace prefix to avoid conflicts with mainnet extension
+const NS = "soci4l-fuji";
+
+console.log("[SOCI4L-Fuji] Extension loaded on X.com");
 
 // Icon SVG (Branded Logo)
 const BADGE_ICON = `
@@ -16,11 +18,10 @@ const BADGE_ICON = `
 
 // Cache to prevent repetitive lookups
 const processedHandles = new Set();
-const verifiedHandles = new Map(); // handle -> profile data
+const verifiedHandles = new Map();
 
 // Config
 const SELECTORS = {
-    // X.com uses UserName and User-Name in different places
     userName: '[data-testid="UserName"], [data-testid="User-Name"]',
     userLink: 'a[href*="/"]',
 };
@@ -35,7 +36,6 @@ function extractHandle(element) {
     const match = text.match(/@([a-zA-Z0-9_]+)/);
     if (match) return match[1];
 
-    // Fallback: check href of parent anchor
     const anchor = element.closest('a');
     if (anchor) {
         const href = anchor.getAttribute('href');
@@ -58,11 +58,11 @@ function updateTheme() {
     if (rgb && rgb.length >= 3) {
         const brightness = (parseInt(rgb[0]) * 299 + parseInt(rgb[1]) * 587 + parseInt(rgb[2]) * 114) / 1000;
         if (brightness > 128) {
-            document.body.classList.remove('soci4l-dark-theme');
-            document.body.classList.add('soci4l-light-theme');
+            document.body.classList.remove(`${NS}-dark-theme`);
+            document.body.classList.add(`${NS}-light-theme`);
         } else {
-            document.body.classList.remove('soci4l-light-theme');
-            document.body.classList.add('soci4l-dark-theme');
+            document.body.classList.remove(`${NS}-light-theme`);
+            document.body.classList.add(`${NS}-dark-theme`);
         }
     }
 }
@@ -86,10 +86,9 @@ async function checkVerification(handle) {
             }
         }
     } catch (err) {
-        console.error("[SOCI4L] Lookup failed:", err);
+        console.error("[SOCI4L-Fuji] Lookup failed:", err);
     }
 
-    // If not verified, we still add to processed to skip repeated failed requests
     processedHandles.add(handle);
     return null;
 }
@@ -101,9 +100,8 @@ let hideTimeout = null;
 function createGlobalTooltip() {
     if (globalTooltip) return;
     globalTooltip = document.createElement('div');
-    globalTooltip.className = 'soci4l-global-tooltip';
+    globalTooltip.className = `${NS}-global-tooltip`;
 
-    // Prevent hiding tooltip when hovering it
     globalTooltip.addEventListener('mouseenter', () => {
         if (hideTimeout) clearTimeout(hideTimeout);
     });
@@ -121,40 +119,38 @@ function showTooltip(target, profile) {
     const profileUrl = `${API_BASE_URL}/p/${profile.slug || profile.address}`;
 
     globalTooltip.innerHTML = `
-        <div class="soci4l-tooltip-header">
-            <div class="soci4l-tooltip-verified">
+        <div class="${NS}-tooltip-header">
+            <div class="${NS}-tooltip-verified">
                 <span>✓ SOCI4L Verified</span>
             </div>
         </div>
         
-        <div class="soci4l-tooltip-address-row">
-            <span class="soci4l-tooltip-address" title="${profile.address}">${shortAddress}</span>
-            <button class="soci4l-copy-btn" id="soci4l-copy-trigger">
+        <div class="${NS}-tooltip-address-row">
+            <span class="${NS}-tooltip-address" title="${profile.address}">${shortAddress}</span>
+            <button class="${NS}-copy-btn" id="${NS}-copy-trigger">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
             </button>
         </div>
         
-        <div class="soci4l-tooltip-actions">
-            <a href="${profileUrl}" target="_blank" class="soci4l-action-btn soci4l-btn-secondary">View Profile</a>
-            <button class="soci4l-action-btn soci4l-btn-primary soci4l-donate-trigger" data-address="${profile.address}" data-slug="${profile.slug || ''}">Donate</button>
+        <div class="${NS}-tooltip-actions">
+            <a href="${profileUrl}" target="_blank" class="${NS}-action-btn ${NS}-btn-secondary">View Profile</a>
+            <button class="${NS}-action-btn ${NS}-btn-primary ${NS}-donate-trigger" data-address="${profile.address}" data-slug="${profile.slug || ''}">Donate</button>
         </div>
     `;
 
-    // Setup copy listener
-    const copyBtn = globalTooltip.querySelector('#soci4l-copy-trigger');
+    const copyBtn = globalTooltip.querySelector(`#${NS}-copy-trigger`);
     if (copyBtn) {
         copyBtn.onclick = (e) => {
             e.preventDefault();
             navigator.clipboard.writeText(profile.address).then(() => {
                 const originalColor = copyBtn.style.color;
-                copyBtn.style.color = '#10b981'; // Success green
+                copyBtn.style.color = '#10b981';
                 setTimeout(() => { copyBtn.style.color = originalColor; }, 1000);
             });
         };
     }
 
-    // Setup donate listener
-    const donateBtn = globalTooltip.querySelector('.soci4l-donate-trigger');
+    const donateBtn = globalTooltip.querySelector(`.${NS}-donate-trigger`);
     if (donateBtn) {
         donateBtn.onclick = (e) => {
             e.preventDefault();
@@ -165,9 +161,8 @@ function showTooltip(target, profile) {
         };
     }
 
-
     globalTooltip.style.left = `${rect.left + rect.width / 2}px`;
-    globalTooltip.style.top = `${rect.top - 8}px`; // Balanced offset
+    globalTooltip.style.top = `${rect.top - 8}px`;
     globalTooltip.classList.add('visible');
 }
 
@@ -177,26 +172,24 @@ function hideTooltip() {
         if (globalTooltip) {
             globalTooltip.classList.remove('visible');
         }
-    }, 200); // Small grace period
+    }, 200);
 }
 
 /**
  * Inject Badge
  */
 function injectBadge(container, profile) {
-    if (container.querySelector('.soci4l-badge') || container.closest('.soci4l-badge-container')) return;
+    if (container.querySelector(`.${NS}-badge`) || container.closest(`.${NS}-badge-container`)) return;
 
-    // Use a SPAN instead of A to prevent DOM destruction from nested anchor tags inside Twitter components
     const badge = document.createElement('span');
-    badge.className = 'soci4l-badge';
+    badge.className = `${NS}-badge`;
 
-    // Add specific class for main profile view (which does not sit inside a post)
     if (!container.closest('[data-testid="tweet"]')) {
-        badge.classList.add('soci4l-badge-profile');
+        badge.classList.add(`${NS}-badge-profile`);
     }
     badge.innerHTML = `
-        <span class="soci4l-badge-icon">${BADGE_ICON}</span>
-        <span class="soci4l-badge-text">SOCI4L</span>
+        <span class="${NS}-badge-icon">${BADGE_ICON}</span>
+        <span class="${NS}-badge-text">SOCI4L</span>
     `;
 
     badge.addEventListener('mouseenter', () => showTooltip(badge, profile));
@@ -207,11 +200,9 @@ function injectBadge(container, profile) {
         window.open(`${API_BASE_URL}/p/${profile.slug || profile.address}`, '_blank');
     };
 
-    // Strategy 1: Find the verified icon wrapper and append to the nearest flex row
+    // Strategy 1: Find the verified icon wrapper
     const verifiedIcon = container.querySelector('[data-testid="icon-verified"]');
     if (verifiedIcon) {
-        // Twitter uses CSS class 'r-18u37iz' for row-based flex containers.
-        // If we append inside the row container, it stays strictly side-by-side.
         const flexRow = verifiedIcon.closest('.r-18u37iz') || verifiedIcon.parentElement;
         if (flexRow) {
             flexRow.style.flexWrap = 'nowrap';
@@ -220,7 +211,7 @@ function injectBadge(container, profile) {
         }
     }
 
-    // Strategy 2: Find the main display name flex container (first inner row)
+    // Strategy 2: Find the main display name flex container
     const nameStr = container.querySelector('span[dir="ltr"]') || container.querySelector('div[dir="ltr"]');
     if (nameStr) {
         const flexRow = nameStr.closest('.r-18u37iz') || nameStr;
@@ -229,7 +220,7 @@ function injectBadge(container, profile) {
         return;
     }
 
-    // Strategy 3: Fallback generic append
+    // Strategy 3: Fallback
     container.style.flexWrap = 'nowrap';
     container.appendChild(badge);
 }
@@ -244,21 +235,18 @@ function scanPage() {
         const currentHandle = extractHandle(el);
         if (!currentHandle) return;
 
-        // Check if the element was already processed for a DIFFERENT handle
-        const processedHandle = el.getAttribute('data-soci4l-handle');
+        const processedHandle = el.getAttribute(`data-${NS}-handle`);
 
         if (processedHandle && processedHandle !== currentHandle) {
-            // Handle changed! Someone navigated or the element was recycled.
-            // Remove the old badge to trigger fresh injection
-            const oldBadge = el.querySelector('.soci4l-badge');
+            const oldBadge = el.querySelector(`.${NS}-badge`);
             if (oldBadge) oldBadge.remove();
-            el.removeAttribute('data-soci4l-processed');
-            el.removeAttribute('data-soci4l-handle');
+            el.removeAttribute(`data-${NS}-processed`);
+            el.removeAttribute(`data-${NS}-handle`);
         }
 
-        if (el.hasAttribute('data-soci4l-processed')) return;
-        el.setAttribute('data-soci4l-processed', 'true');
-        el.setAttribute('data-soci4l-handle', currentHandle);
+        if (el.hasAttribute(`data-${NS}-processed`)) return;
+        el.setAttribute(`data-${NS}-processed`, 'true');
+        el.setAttribute(`data-${NS}-handle`, currentHandle);
 
         const profile = await checkVerification(currentHandle);
 
@@ -277,9 +265,7 @@ const observer = new MutationObserver(() => {
 
 observer.observe(document.body, { childList: true, subtree: true });
 
-// Scroll listener to hide tooltip on scroll
 window.addEventListener('scroll', hideTooltip, { passive: true });
 
-// Initial scan
 setTimeout(scanPage, 600);
-console.log("[SOCI4L] Observer started");
+console.log("[SOCI4L-Fuji] Observer started");
